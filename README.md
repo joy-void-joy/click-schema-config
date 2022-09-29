@@ -1,8 +1,21 @@
 # click-schema-config
 click-schema-config allows you to add settings from a config file. Those will be automatically pulled into your program description without having to repeat them. Comments will be used as helper text for click.
 
+# Installation
+```sh
+poetry add click-schema-config
+```
+or, using pip
+```
+pip install click-schema-config
+```
+
 # Usage
-The folder test right now contains te following example:
+Decorate your function with
+```
+@schema_from_inis(filenames=[...])
+```
+This will automatically infer the structure of your ini files and its documentation and add it to click.
 
 Example of a config.default.ini:
 ```ini
@@ -33,7 +46,6 @@ from click_schema_config import schema_from_inis
 @schema_from_inis(filenames=["config.default.ini"])
 def main(**kwargs):
     pprint.pprint(kwargs)
-
 
 if __name__ == "__main__":
     main()
@@ -68,9 +80,6 @@ python TODO.py --test2.123j hey
 ```
 # Rationale
 [TODO]
-
-# Install
-[TODO once pushed to pypi]
 
 # TODO
 [TODO]
