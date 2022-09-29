@@ -32,7 +32,7 @@ def schema_from_inis(filenames=["config.default.ini", "config.ini"]):
                     option_name.replace(".", "__"),
                     type=__builtins__[d["type"]] if d["type"] != "NoneType" else None,
                     default=d["value"],
-                    help=d["description"],
+                    help=f"\n{d['description'] or ''}".replace("\n", "\b\n"),
                 )(func)
 
         return func
