@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "click-schema-config"
-version = "0.1.2"
+version = "0.1.5"
 description = ""
 authors = ["Joy Void Joy <joy.void.joy@gmail.com>"]
 readme = "README.md"

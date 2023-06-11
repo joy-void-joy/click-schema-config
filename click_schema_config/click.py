@@ -1,3 +1,5 @@
+__all__ = ["schema_from_inis"]
+
 from typing import Any, Protocol
 from click.decorators import FC
 from .types import FileLike
