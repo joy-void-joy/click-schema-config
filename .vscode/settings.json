@@ -9,7 +9,6 @@
   },
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
-  "files.eol": "\n",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "python.linting.mypyEnabled": true,
   "python.linting.enabled": true,
@@ -23,6 +22,7 @@
   },
   "python.analysis.typeCheckingMode": "strict",
   "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingTypeStubs": "none",
     "reportUnknownLambdaType": "none",
     "reportUnknownMemberType": "none",
     "reportUnknownVariableType": "none",
