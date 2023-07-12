@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Variable:
+    option_name: str
+    programmatic_name: str
     type: str | None = None
     value: Any | None = None
     description: str | None = None

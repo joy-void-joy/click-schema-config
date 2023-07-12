@@ -39,12 +39,8 @@ def schema_from_inis(
 
     def decorator(func: FC) -> FC:
         # We use reverse-order so that the options are added in the order they appear in the file
-        for section, options in reversed(config.items()):
-            for variable_name, d in reversed(options.items()):
-                option_name = (
-                    f"{f'{section}.' if section != 'DEFAULT' else ''}{variable_name}"
-                )
-
+        for section in reversed(config.values()):
+            for d in reversed(section.values()):
                 type_evalled = d.type
                 if type_evalled is not None:
                     if insecure_eval:
@@ -56,10 +52,10 @@ def schema_from_inis(
                         type_evalled = getattr(builtins, type_evalled, None)
 
                 func = click.option(
-                    f"--{option_name}"
+                    f"--{d.option_name}"
                     if type_evalled is not bool
-                    else f"--{option_name}/--no-{option_name}",
-                    option_name.replace(".", "__"),
+                    else f"--{d.option_name}/--no-{d.option_name}",
+                    d.programmatic_name,
                     **(
                         dict(
                             type=type_evalled,
