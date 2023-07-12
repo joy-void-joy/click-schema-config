@@ -7,7 +7,7 @@ from .types import FileLike
 import builtins
 
 import click
-from .config import read_configs
+from .read_config import read_configs
 
 
 class Decorator(Protocol):

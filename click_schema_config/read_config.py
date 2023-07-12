@@ -20,7 +20,7 @@ regexes = Regexes(
     section=re.compile(r"^\[(?P<section>.*)\](#.*)?$"),
     comment=re.compile(r"^[#;]\s?(?P<comment>.*)$"),
     variable=re.compile(
-        r"^(?P<name>\w+)\s*(:\s*(?P<type>\w+))?\s*((?P<not_required>=)\s*(?P<value>.*))?\s*([#;].*)?$"
+        r"^(?P<name>\w+(-\w+)*)\s*(:\s*(?P<type>\w+))?\s*((?P<not_required>=)\s*(?P<value>.*))?\s*([#;].*)?$"
     ),
 )
 
@@ -29,15 +29,15 @@ def read_config(config: FileLike, preconfig: Config | None = None) -> Config:
     if isinstance(config, str):
         with open(config) as file:
             return read_config(file, preconfig)
-    result: Config = dict(**(preconfig or {}))
-    result.setdefault("DEFAULT", {})
+    result: Config = (preconfig or {}).copy()
+    result.setdefault(None, {})
 
     @dataclass
     class Current:
-        section: str
+        section: str | None
         description: list[str]
 
-    current = Current(section="DEFAULT", description=[])
+    current = Current(section=None, description=[])
     for i in config:
         match i.strip():
             case "":
@@ -60,8 +60,14 @@ def read_config(config: FileLike, preconfig: Config | None = None) -> Config:
                     if (typename := type(variable_value).__name__) != "NoneType"
                     else None
                 )
+
+                option_name = f"{f'{current.section}.' if current.section is not None else ''}{variable_name}"
+                programmatic_name = option_name.replace(".", "__").replace("-", "_")
                 current_variable = result[current.section].get(
-                    variable_name, Variable()
+                    variable_name,
+                    Variable(
+                        option_name=option_name, programmatic_name=programmatic_name
+                    ),
                 )
 
                 result[current.section][variable_name] = dataclasses.replace(
@@ -94,7 +100,7 @@ def read_config(config: FileLike, preconfig: Config | None = None) -> Config:
 def read_configs(
     filenames: FileLike | list[FileLike], preconfig: Config | None = None
 ) -> Config:
-    result = dict(**(preconfig or {}))
+    result = (preconfig or {}).copy()
     if not isinstance(filenames, list):
         filenames = [filenames]
 
