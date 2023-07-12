@@ -1,7 +1,9 @@
 __all__ = ["schema_from_inis"]
 
-from _typeshed import IdentityFunction
-from typing import Any, Callable
+from typing import Any, Callable, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from _typeshed import IdentityFunction
 from .types import FileLike
 
 import builtins
@@ -16,7 +18,7 @@ def schema_from_inis(
     files: list[FileLike] | FileLike = ["config.default.ini", "config.ini"],
     insecure_eval: bool = False,
     **kwargs: Any,
-) -> IdentityFunction:
+) -> "IdentityFunction":
     """Decorate a click command to load options from a config file.
 
     Parameters
