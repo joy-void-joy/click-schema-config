@@ -1,0 +1,2 @@
+schemas:
+  config: "./config.default.ini"
