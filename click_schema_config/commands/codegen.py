@@ -2,7 +2,7 @@ import contextlib
 import re
 import typing
 import click
-from halo import Halo
+from halo import Halo  # type: ignore[import]
 
 import pathlib
 import yaml

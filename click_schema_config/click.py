@@ -1,7 +1,7 @@
 __all__ = ["schema_from_inis"]
 
-from typing import Any, Protocol
-from click.decorators import FC
+from _typeshed import IdentityFunction
+from typing import Any, Callable
 from .types import FileLike
 
 import builtins
@@ -9,17 +9,14 @@ import builtins
 import click
 from .read_config import read_configs
 
-
-class Decorator(Protocol):
-    def __call__(self, func: FC) -> FC:
-        ...
+FC = Callable[..., Any]
 
 
 def schema_from_inis(
     files: list[FileLike] | FileLike = ["config.default.ini", "config.ini"],
     insecure_eval: bool = False,
     **kwargs: Any,
-) -> Decorator:
+) -> IdentityFunction:
     """Decorate a click command to load options from a config file.
 
     Parameters
@@ -37,7 +34,7 @@ def schema_from_inis(
 
     config = read_configs(files)
 
-    def decorator(func: FC) -> FC:
+    def decorator(func: FC, /) -> FC:
         # We use reverse-order so that the options are added in the order they appear in the file
         for section in reversed(config.values()):
             for d in reversed(section.values()):
@@ -57,7 +54,7 @@ def schema_from_inis(
                     else f"--{d.option_name}/--no-{d.option_name}",
                     d.programmatic_name,
                     **(
-                        dict(
+                        dict(  # type: ignore[arg-type]
                             type=type_evalled,
                             default=d.value,
                             required=d.required,
@@ -66,8 +63,12 @@ def schema_from_inis(
                         )
                         | kwargs
                     ),
-                )(func)
+                )(
+                    func  # type: ignore[arg-type]
+                )
 
         return func
 
-    return decorator
+    # Seems to be a mypy bug?
+    # https://github.com/python/mypy/issues/9810
+    return decorator  # type: ignore[return-value]
