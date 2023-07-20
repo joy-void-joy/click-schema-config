@@ -1,9 +1,13 @@
 __all__ = ["read_config", "read_configs"]
 
+
+from typing import Iterable
 from .types import Config, FileLike, Variable
 
 from dataclasses import dataclass
 import dataclasses
+
+import pathlib
 
 import ast
 import re
@@ -26,9 +30,13 @@ regexes = Regexes(
 
 
 def read_config(config: FileLike, preconfig: Config | None = None) -> Config:
-    if isinstance(config, str):
-        with open(config) as file:
-            return read_config(file, preconfig)
+    # Mypy does not seem to like EAFP well
+    try:
+        config = pathlib.Path(config).read_text().splitlines()  # type: ignore[arg-type]
+    except TypeError:
+        pass
+    config_lines: Iterable[str] = config  # type: ignore[assignment]
+
     result: Config = (preconfig or {}).copy()
     result.setdefault(None, {})
 
@@ -38,7 +46,7 @@ def read_config(config: FileLike, preconfig: Config | None = None) -> Config:
         description: list[str]
 
     current = Current(section=None, description=[])
-    for i in config:
+    for i in config_lines:
         match i.strip():
             case "":
                 current.description = []
@@ -98,11 +106,11 @@ def read_config(config: FileLike, preconfig: Config | None = None) -> Config:
 
 
 def read_configs(
-    filenames: FileLike | list[FileLike], preconfig: Config | None = None
+    filenames: FileLike | Iterable[FileLike], preconfig: Config | None = None
 ) -> Config:
-    result = (preconfig or {}).copy()
-    if not isinstance(filenames, list):
+    if isinstance(filenames, str) or not isinstance(filenames, Iterable):
         filenames = [filenames]
+    result = (preconfig or {}).copy()
 
     for file in filenames:
         result = read_config(file, result)

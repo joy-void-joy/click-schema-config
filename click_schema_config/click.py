@@ -1,10 +1,12 @@
+from typing import TYPE_CHECKING
+
 __all__ = ["schema_from_inis"]
 
-from typing import Any, Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from _typeshed import IdentityFunction
-from .types import FileLike
+from typing import Any, Callable, Iterable
+from click_schema_config.types import FileLike
 
 import builtins
 
@@ -15,7 +17,7 @@ FC = Callable[..., Any]
 
 
 def schema_from_inis(
-    files: list[FileLike] | FileLike = ["config.default.ini", "config.ini"],
+    filenames: Iterable[FileLike] | FileLike = ["config.default.ini", "config.ini"],
     insecure_eval: bool = False,
     **kwargs: Any,
 ) -> "IdentityFunction":
@@ -23,18 +25,15 @@ def schema_from_inis(
 
     Parameters
     ----------
-    filenames : list[FileLike] | files, optional
-        List of files (either open file-pointers or filenames) to load, by default ["config.default.ini", "config.ini"]
-    insecure_eval : bool, optional
+    filenames
+        List of filenames to load, by default ["config.default.ini", "config.ini"]
+    insecure_eval
         Whether or not to allow arbitrary code execution, by default False
-    **kwargs : Any
-        Passed to click.option
+    **kwargs
+        Passed to click.option directly
     """
 
-    if isinstance(files, str):
-        files = [files]
-
-    config = read_configs(files)
+    config = read_configs(filenames)
 
     def decorator(func: FC, /) -> FC:
         # We use reverse-order so that the options are added in the order they appear in the file

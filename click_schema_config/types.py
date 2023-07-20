@@ -1,4 +1,8 @@
-from typing import Any, Iterable, TypeAlias
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+from typing import Any, TypeAlias, Iterable
 
 from dataclasses import dataclass
 
@@ -16,5 +20,4 @@ class Variable:
 Section: TypeAlias = dict[str, Variable]
 Config: TypeAlias = dict[str | None, Section]
 
-
-FileLike: TypeAlias = Iterable[str] | str
+FileLike: TypeAlias = "StrPath | Iterable[str]"
