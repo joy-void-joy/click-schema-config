@@ -24,7 +24,7 @@ regexes = Regexes(
     section=re.compile(r"^\[(?P<section>.*)\](#.*)?$"),
     comment=re.compile(r"^[#;]\s?(?P<comment>.*)$"),
     variable=re.compile(
-        r"^(?P<name>\w+(-\w+)*)\s*(:\s*(?P<type>\w+))?\s*((?P<not_required>=)\s*(?P<value>.*))?\s*([#;].*)?$"
+        r"^(?P<name>\w+(-\w+)*)\s*(:\s*(?P<type>\w+))?\s*(?P<not_required>=\s*(?P<value>.*))?\s*([#;].*)?$"
     ),
 )
 
